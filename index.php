@@ -61,11 +61,10 @@ if (isloggedin()) {
     echo '<p>antes </p>';
     echo '<h3>' . $saludosidiomas. '</h3>';
     echo '<p>después</p>';
-    // Vvar_dump($USER);.
 } else {
     echo '<h2>Greetings, user</h2>';
     echo get_string('greetinguser', 'local_chats');
-    
+
 }
 echo '<h4>saludando al usuario '. $username . '</h4>';
 echo '<p>Este tu nombre firstname '. $userfirstname .'</p>';
