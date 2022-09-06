@@ -34,4 +34,9 @@ $string['greetinguseres'] = 'Hola, {$a}.';
 $string['greetinguserfj'] = 'Bula, {$a}.';
 $string['greetingusernz'] = 'Kia Ora, {$a}.';
 $string['greetingusercat'] = 'Bon dia, {$a}.';
+$string['yourmessageen'] = 'Your message';
+$string['yourmessagees'] = 'Escriba aquí su mensaje';
+$string['yourmessagecat'] = 'Escriviu aquí el seu missatge';
+$string['emailes'] = 'Escriba su correo';
+
 

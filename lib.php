@@ -97,3 +97,26 @@ function local_chats_get_greeting($user) {
 
     return get_string($langstr, 'local_chats', fullname($user));
 }
+
+
+function local_chats_get_message_form($user) {
+
+    $country = $user->country;
+    $city = $user->city;
+
+    if ( $city === 'Barcelona' ){
+        $langstr = 'yourmessagecat';
+    } else {
+
+        switch ($country) {
+            case 'ES':
+                $langstr = 'yourmessagees';
+                break;
+            default:
+                $langstr = 'yourmessageen';
+                break;
+        }
+    }
+
+    return get_string($langstr, 'local_chats');
+}

@@ -25,6 +25,7 @@
 
 require_once('../../config.php');
 require_once($CFG->dirroot. '/local/chats/lib.php');
+require_once($CFG->dirroot. '/local/chats/message_form.php');
 
 
 $context = context_system::instance();
@@ -50,6 +51,7 @@ $grade = 20.00 / 3;
 $saludos = get_string('greetingloggedinuser', 'local_chats', fullname($USER));
 $saludosidiomas = local_chats_get_greeting($USER);
 
+$messageform = new local_chats_message_form();
 
 
 echo $OUTPUT->header();
@@ -86,5 +88,23 @@ echo '<p> Formato qué pasa con la hora: '.userdate($date->getTimestamp()).'</p>
 echo '<p> Formato sin la hora: '.userdate($date->getTimestamp(), get_string('strftimedatefullshort', 'core_langconfig')).'</p>';
 
 echo '<p> Tratando números decimales 20 / 3 = '.format_float($grade, 2).'</p>';
+
+$messageform->display();
+if ($data = $messageform->get_data()) {
+    $message = required_param('message', PARAM_TEXT);
+    echo $OUTPUT->heading($message, 4);
+    $email = required_param('email', PARAM_NOTAGS);
+    echo $OUTPUT->heading($email, 4);
+    $forum = required_param('name', PARAM_TEXT);
+    echo $OUTPUT->heading($forum, 4);
+    $defaultmark = required_param('defaultmark', PARAM_NOTAGS);
+    echo $OUTPUT->heading($defaultmark, 4);
+    $introduction = required_param('introduction', PARAM_TEXT);
+    echo $OUTPUT->heading($introduction, 4);
+    // $file = required_param('file', PARAM_TEXT);
+    // echo $OUTPUT->heading($file, 4);
+
+    var_dump($data);
+}
 
 echo $OUTPUT->footer();
