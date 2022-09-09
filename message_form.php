@@ -38,9 +38,9 @@ class local_chats_message_form extends moodleform {
     public function definition() {
         $mform    = $this->_form; // Don't forget the underscore!
 
-        $mform->addElement('textarea', 'message', get_string('yourmessagees', 'local_chats')); // Add elements to your form.
+        // $mform->addElement('textarea', 'message', get_string('yourmessagees', 'local_chats')); // Add elements to your form.
         // $mform->addElement('textarea', 'message', get_string('yourmessageen', 'local_chats')); // Add elements to your form.
-        // $mform->addElement('textarea', 'message', get_string('yourmessagecat', 'local_chats')); // Add elements to your form.
+        $mform->addElement('textarea', 'message', get_string('yourmessagecat', 'local_chats')); // Add elements to your form.
         $mform->setType('message', PARAM_TEXT); // Set type of element.
 
         // $mform->addElement('text', 'email', get_string('emailes', 'local_chats')); // Add elements to your form.
@@ -54,11 +54,12 @@ class local_chats_message_form extends moodleform {
 
         $mform->addElement('textarea', 'introduction', get_string("introtext", "survey"), 'wrap="virtual" rows="10" cols="10"');
 
-        $mform->addElement('file', 'file', get_string('file')); // Add elements to your form
-        $mform->setType('file', PARAM_NOTAGS);                   //Set type of element
-        $mform->setDefault('file', 'Please select a file'); 
-        
+        // // $mform->addElement('file', 'file', get_string('file')); // Add elements to your form
+        // // $mform->setType('file', PARAM_NOTAGS);                   //Set type of element
+        // // $mform->setDefault('file', 'Please select a file');
+
         $submitlabel = get_string('submit');
         $mform->addElement('submit', 'submitmessage', $submitlabel);
     }
+
 }
