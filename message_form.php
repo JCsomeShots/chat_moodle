@@ -43,16 +43,16 @@ class local_chats_message_form extends moodleform {
         $mform->addElement('textarea', 'message', get_string('yourmessagecat', 'local_chats')); // Add elements to your form.
         $mform->setType('message', PARAM_TEXT); // Set type of element.
 
-        // $mform->addElement('text', 'email', get_string('emailes', 'local_chats')); // Add elements to your form.
-        $mform->addElement('text', 'email', get_string('email')); // Add elements to your form.
-        $mform->setType('email', PARAM_NOTAGS);                   // Set type of element.
-        // $mform->setDefault('email', 'Por favor entre su correo');        // Default value.
+        // // $mform->addElement('text', 'email', get_string('emailes', 'local_chats')); // Add elements to your form.
+        // $mform->addElement('text', 'email', get_string('email')); // Add elements to your form.
+        // $mform->setType('email', PARAM_NOTAGS);                   // Set type of element.
+        // // $mform->setDefault('email', 'Por favor entre su correo');        // Default value.
 
-        $mform->addElement('text', 'name', get_string('forumname', 'forum'), $attributes);
+        // $mform->addElement('text', 'name', get_string('forumname', 'forum'), $attributes);
 
-        $mform->addElement('float', 'defaultmark', get_string('defaultmark', 'question'), $attributes);
+        // $mform->addElement('float', 'defaultmark', get_string('defaultmark', 'question'), $attributes);
 
-        $mform->addElement('textarea', 'introduction', get_string("introtext", "survey"), 'wrap="virtual" rows="10" cols="10"');
+        // $mform->addElement('textarea', 'introduction', get_string("introtext", "survey"), 'wrap="virtual" rows="10" cols="10"');
 
         // // $mform->addElement('file', 'file', get_string('file')); // Add elements to your form
         // // $mform->setType('file', PARAM_NOTAGS);                   //Set type of element

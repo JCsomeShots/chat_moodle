@@ -38,5 +38,7 @@ $string['yourmessageen'] = 'Your message';
 $string['yourmessagees'] = 'Escriba aquí su mensaje';
 $string['yourmessagecat'] = 'Escriviu aquí el seu missatge';
 $string['emailes'] = 'Escriba su correo';
+$string['postedby'] = 'Posted by {$a}.';
+
 
 

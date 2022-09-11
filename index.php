@@ -99,14 +99,14 @@ if ($data = $messageform->get_data()) {
     $message = required_param('message', PARAM_TEXT);
     echo $OUTPUT->heading($message, 4);
 
-    $email = required_param('email', PARAM_NOTAGS);
-    echo $OUTPUT->heading($email, 4);
-    $forum = required_param('name', PARAM_TEXT);
-    echo $OUTPUT->heading($forum, 4);
-    $defaultmark = required_param('defaultmark', PARAM_NOTAGS);
-    echo $OUTPUT->heading($defaultmark, 4);
-    $introduction = required_param('introduction', PARAM_TEXT);
-    echo $OUTPUT->heading($introduction, 4);
+    // $email = required_param('email', PARAM_NOTAGS);
+    // echo $OUTPUT->heading($email, 4);
+    // $forum = required_param('name', PARAM_TEXT);
+    // echo $OUTPUT->heading($forum, 4);
+    // $defaultmark = required_param('defaultmark', PARAM_NOTAGS);
+    // echo $OUTPUT->heading($defaultmark, 4);
+    // $introduction = required_param('introduction', PARAM_TEXT);
+    // echo $OUTPUT->heading($introduction, 4);
 
     // $file = required_param('file', PARAM_TEXT);
     // echo $OUTPUT->heading($file, 4);
@@ -118,10 +118,24 @@ if ($data = $messageform->get_data()) {
         $record->message = $message;
         $record->timecreated = time();
 
+        $record->userid = $USER->id;
+
+
         $DB->insert_record('local_chats_messages', $record);
     }
 
+    // Versión directa.
     $messages = $DB->get_records('local_chats_messages');
+
+    $userfields = \core_user\fields::for_name()->with_identity($context);
+    $userfieldssql = $userfields->get_sql('u');
+    
+    $sql = "SELECT m.id, m.message, m.timecreated, m.userid {$userfieldssql->selects}
+              FROM {local_chats_messages} m
+         LEFT JOIN {user} u ON u.id = m.userid
+          ORDER BY timecreated DESC";
+    
+    $messages = $DB->get_records_sql($sql);
 
     foreach ($messages as $m) {
         echo '<p>' . $m->message . ', ' . $m->timecreated . '</p>';
@@ -134,6 +148,8 @@ if ($data = $messageform->get_data()) {
         echo html_writer::start_tag('div', array('class' => 'card'));
         echo html_writer::start_tag('div', array('class' => 'card-body'));
         echo html_writer::tag('p', $m->message, array('class' => 'card-text'));
+        echo html_writer::tag('p', get_string('postedby', 'local_chats', $m->firstname), array('class' => 'card-text'));
+
         echo html_writer::start_tag('p', array('class' => 'card-text'));
         echo html_writer::tag('small', userdate($m->timecreated), array('class' => 'text-muted'));
         echo html_writer::end_tag('p');
