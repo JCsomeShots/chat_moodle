@@ -36,6 +36,18 @@ $PAGE->set_title($SITE->fullname);
 $titulo = get_string('pluginname', 'local_chats');
 $PAGE->set_heading($titulo);
 
+require_login();
+
+if (isguestuser()) {
+    throw new moodle_exception('noguest');
+}
+
+if (!is_siteadmin()) {
+    throw new moodle_exception('only for Admin');
+
+    // die('Admin only');
+}
+
 global $USER;
 $userid = $USER->id;
 $username = $USER->username;
@@ -68,18 +80,17 @@ if (isloggedin()) {
     echo get_string('greetinguser', 'local_chats');
 
 }
-echo '<h4>saludando al usuario '. $username . '</h4>';
-echo '<p>Este tu nombre firstname '. $userfirstname .'</p>';
-echo '<p>Este tu nombre lastname '. $userlastname .'</p>';
-echo '<p>Este tu user ID '.$userid.'</p>';
-echo '<p>'.$useremail.'</p>';
-echo '<p> Ciudad: '.$usercity.'</p>';
-echo '<p> País: '.$usercountry.'</p>';
-echo '<p> idioma: '. $userlang .'</p>';
-echo '<br>';
-echo '<br>';
-echo get_string('caca', 'local_chats' , fullname($USER));
-
+// echo '<h4>saludando al usuario '. $username . '</h4>';
+// echo '<p>Este tu nombre firstname '. $userfirstname .'</p>';
+// echo '<p>Este tu nombre lastname '. $userlastname .'</p>';
+// echo '<p>Este tu user ID '.$userid.'</p>';
+// echo '<p>'.$useremail.'</p>';
+// echo '<p> Ciudad: '.$usercity.'</p>';
+// echo '<p> País: '.$usercountry.'</p>';
+// echo '<p> idioma: '. $userlang .'</p>';
+// echo '<br>';
+// echo '<br>';
+// echo get_string('caca', 'local_chats' , fullname($USER));
 echo '<p>Este debería ser un parrafo de trasteo, en el se encontrará info de lo que ocurre en el mundo</p>';
 
 $now = time();
@@ -99,6 +110,7 @@ if ($data = $messageform->get_data()) {
     $message = required_param('message', PARAM_TEXT);
     echo $OUTPUT->heading($message, 4);
 
+    // Some comments
     // $email = required_param('email', PARAM_NOTAGS);
     // echo $OUTPUT->heading($email, 4);
     // $forum = required_param('name', PARAM_TEXT);
@@ -106,15 +118,14 @@ if ($data = $messageform->get_data()) {
     // $defaultmark = required_param('defaultmark', PARAM_NOTAGS);
     // echo $OUTPUT->heading($defaultmark, 4);
     // $introduction = required_param('introduction', PARAM_TEXT);
-    // echo $OUTPUT->heading($introduction, 4);
-
+    // echo $OUTPUT->heading($introduction, 4);.
     // $file = required_param('file', PARAM_TEXT);
-    // echo $OUTPUT->heading($file, 4);
+    // echo $OUTPUT->heading($file, 4);.
 
     var_dump($data);
 
     if (!empty($message)) {
-        $record = new stdClass;
+        $record = new stdClass();
         $record->message = $message;
         $record->timecreated = time();
 
@@ -123,41 +134,45 @@ if ($data = $messageform->get_data()) {
 
         $DB->insert_record('local_chats_messages', $record);
     }
-
-    // Versión directa.
-    $messages = $DB->get_records('local_chats_messages');
-
-    $userfields = \core_user\fields::for_name()->with_identity($context);
-    $userfieldssql = $userfields->get_sql('u');
-    
-    $sql = "SELECT m.id, m.message, m.timecreated, m.userid {$userfieldssql->selects}
-              FROM {local_chats_messages} m
-         LEFT JOIN {user} u ON u.id = m.userid
-          ORDER BY timecreated DESC";
-    
-    $messages = $DB->get_records_sql($sql);
-
-    foreach ($messages as $m) {
-        echo '<p>' . $m->message . ', ' . $m->timecreated . '</p>';
-    }
-
-
-    echo $OUTPUT->box_start('card-columns');
-
-    foreach ($messages as $m) {
-        echo html_writer::start_tag('div', array('class' => 'card'));
-        echo html_writer::start_tag('div', array('class' => 'card-body'));
-        echo html_writer::tag('p', $m->message, array('class' => 'card-text'));
-        echo html_writer::tag('p', get_string('postedby', 'local_chats', $m->firstname), array('class' => 'card-text'));
-
-        echo html_writer::start_tag('p', array('class' => 'card-text'));
-        echo html_writer::tag('small', userdate($m->timecreated), array('class' => 'text-muted'));
-        echo html_writer::end_tag('p');
-        echo html_writer::end_tag('div');
-        echo html_writer::end_tag('div');
-    }
-
-    echo $OUTPUT->box_end();
 }
+// Versión directa.
+$messages = $DB->get_records('local_chats_messages');
+
+$userfields = \core_user\fields::for_name()->with_identity($context);
+$userfieldssql = $userfields->get_sql('u');
+
+$sql = "SELECT m.id, m.message, m.timecreated, m.userid {$userfieldssql->selects}
+            FROM {local_chats_messages} m
+        LEFT JOIN {user} u ON u.id = m.userid
+        ORDER BY timecreated DESC";
+
+$messages = $DB->get_records_sql($sql);
+
+foreach ($messages as $m) {
+    echo '<p>' . $m->message . ', ' . $m->timecreated . '</p>';
+}
+
+
+echo $OUTPUT->box_start('card-columns');
+
+foreach ($messages as $m) {
+    echo html_writer::start_tag('div', array('class' => 'card'));
+    echo html_writer::start_tag('div', array('class' => 'card-body'));
+
+    // Old version without sanity estructure.
+    // Eecho html_writer::tag('p', $m->message, array('class' => 'card-text'));.
+    // To sanity the format of the message.
+    echo html_writer::tag('p', format_text($m->message, FORMAT_PLAIN), array('class' => 'card-text'));
+    echo html_writer::tag('p', get_string('postedby', 'local_chats', $m->firstname), array('class' => 'card-text'));
+
+    echo html_writer::start_tag('p', array('class' => 'card-text'));
+    echo html_writer::tag('small', userdate($m->timecreated), array('class' => 'text-muted'));
+    echo html_writer::end_tag('p');
+    echo html_writer::end_tag('div');
+    echo html_writer::end_tag('div');
+}
+
+echo $OUTPUT->box_end();
+
 
 echo $OUTPUT->footer();

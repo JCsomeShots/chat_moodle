@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Chatsss';
 $string['greetinguser'] = 'Greetings, user.';
-$string['greetingloggedinuser'] = 'Greetings,  {$a}.';
+$string['greetingloggedinuser'] = 'Greetingss,  {$a}.';
 $string['caca'] = 'Este es el mensaje de caca, {$a}.';
 $string['greetinguserau'] = 'Hello, {$a}.';
 $string['greetinguseres'] = 'Hola, {$a}.';

@@ -30,10 +30,16 @@ defined('MOODLE_INTERNAL') || die();
  * @param navigation_node $frontpage Node representing the front page in the navigation tree.
  */
 function local_chats_extend_navigation_frontpage(navigation_node $frontpage) {
-    $frontpage->add(
-        get_string('pluginname', 'local_chats'),
-        new moodle_url('/local/chats/index.php')
-    );
+    if(isloggedin() && !isguestuser()){
+        $frontpage->add(
+            get_string('pluginname', 'local_chats'),
+            new moodle_url('/local/chats/index.php'),
+            navigation_node::TYPE_CUSTOM,
+            null,
+            null,
+            new pix_icon('t/message', '')
+        );
+    }
 }
 
 /**
@@ -42,19 +48,21 @@ function local_chats_extend_navigation_frontpage(navigation_node $frontpage) {
  * @param global_navigation $root Node representing the global navigation tree.
  */
 function local_chats_extend_navigation(global_navigation $root) {
+    if(is_siteadmin()){
+        $node = navigation_node::create(
+            get_string('pluginname', 'local_chats'),
+            new moodle_url('/local/chats/index.php'),
+            navigation_node::TYPE_CUSTOM,
+            null,
+            null,
+            new pix_icon('t/message', '')
+        );
+    
+        $node->showinflatnavigation = true;
+    
+        $root->add_node($node);
+    }
 
-    $node = navigation_node::create(
-        get_string('pluginname', 'local_chats'),
-        new moodle_url('/local/chats/index.php'),
-        navigation_node::TYPE_CUSTOM,
-        null,
-        null,
-        new pix_icon('t/message', '')
-    );
-
-    $node->showinflatnavigation = true;
-
-    $root->add_node($node);
 }
 
 /**
@@ -71,7 +79,7 @@ function local_chats_get_greeting($user) {
     $country = $user->country;
     $city = $user->city;
 
-    if ( $city === 'Barcelona' ){
+    if($city == 'Barcelona'){
 
         $langstr = 'greetingusercat';
     } else {
@@ -104,7 +112,7 @@ function local_chats_get_message_form($user) {
     $country = $user->country;
     $city = $user->city;
 
-    if ( $city === 'Barcelona' ){
+    if($city == 'Barcelona'){
         $langstr = 'yourmessagecat';
     } else {
 

@@ -29,8 +29,8 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @param int $oldversion Version number the plugin is being upgraded from.
  */
-function xmldb_local_chats_upgrade($oldversion)
-{
+function xmldb_local_chats_upgrade($oldversion) {
+
     global $DB;
     $dbman = $DB->get_manager();
 
