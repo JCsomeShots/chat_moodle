@@ -24,8 +24,29 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_chats';
-$plugin->release = '0.1.0';
-$plugin->version = 2022091301;
-$plugin->requires = 2021051700;
-$plugin->maturity = MATURITY_ALPHA;
+$capabilities = array(
+    'local/chats:postmessages' => array(
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'user' => CAP_ALLOW,
+        )
+    ),
+    'local/chats:viewmessages' => array(
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'user' => CAP_ALLOW,
+        )
+    ),
+    'local/chats:deleteanymessages' => array(
+        'riskbitmask' => RISK_DATALOSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'user' => CAP_ALLOW,
+        )
+    ),
+);

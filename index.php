@@ -42,11 +42,10 @@ if (isguestuser()) {
     throw new moodle_exception('noguest');
 }
 
-if (!is_siteadmin()) {
-    throw new moodle_exception('only for Admin');
-
-    // die('Admin only');
-}
+// if (!is_siteadmin()) {
+//     throw new moodle_exception('only for Admin');
+//     // die('Admin only');
+// }
 
 global $USER;
 $userid = $USER->id;
@@ -63,6 +62,32 @@ $grade = 20.00 / 3;
 $saludos = get_string('greetingloggedinuser', 'local_chats', fullname($USER));
 $saludosidiomas = local_chats_get_greeting($USER);
 
+
+
+
+$allowpost = has_capability('local/chats:postmessages', $context);
+$viewpost = has_capability('local/chats:viewmessages', $context);
+$deleteanypost = has_capability('local/chats:deleteanymessages', $context);
+
+$action = optional_param('action', '', PARAM_TEXT);
+
+// This capability allow delete message with change url with id 
+// if ($action == 'del') {
+//     $id = required_param('id', PARAM_TEXT);
+
+//     $DB->delete_records('local_chats_messages', array('id' => $id));
+// }
+
+if ($action == 'del') {
+    $id = required_param('id', PARAM_TEXT);
+
+    if ($deleteanypost) {
+        $params = array('id' => $id);
+
+        $DB->delete_records('local_chats_messages', $params);
+    }
+}
+
 $messageform = new local_chats_message_form();
 
 
@@ -71,13 +96,23 @@ echo $OUTPUT->header();
 if (isloggedin()) {
     echo '<h2>Greetings, ' . $userfirstname . '</h2>';
     echo '<p>'.$saludos.' </p>';
+    echo '<br>';
     echo get_string('greetingloggedinuser', 'local_chats', fullname($USER));
-    echo '<p>antes </p>';
+    echo '<br>';
+    echo '<br>';
+    echo '<br>';
+    echo '<br>';
     echo '<h3>' . $saludosidiomas. '</h3>';
-    echo '<p>después</p>';
+    echo '<br>';
+    echo '<br>';
+    echo '<br>';
 } else {
     echo '<h2>Greetings, user</h2>';
     echo get_string('greetinguser', 'local_chats');
+    echo '<br>';
+    echo '<br>';
+    echo '<br>';
+    echo '<br>';
 
 }
 // echo '<h4>saludando al usuario '. $username . '</h4>';
@@ -91,24 +126,36 @@ if (isloggedin()) {
 // echo '<br>';
 // echo '<br>';
 // echo get_string('caca', 'local_chats' , fullname($USER));
-echo '<p>Este debería ser un parrafo de trasteo, en el se encontrará info de lo que ocurre en el mundo</p>';
+
+// echo '<p>Este debería ser un parrafo de trasteo, en el se encontrará info de lo que ocurre en el mundo</p>';
 
 $now = time();
 echo '<p>'.userdate($now).'</p>';
 
-echo '<p> Formato qué pasa con la hora: '.userdate($date->getTimestamp()).'</p>';
+// echo '<p> Formato qué pasa con la hora: '.userdate($date->getTimestamp()).'</p>';
 
-echo '<p> Formato sin la hora: '.userdate($date->getTimestamp(), get_string('strftimedatefullshort', 'core_langconfig')).'</p>';
+// echo '<p> Formato sin la hora: '.userdate($date->getTimestamp(), get_string('strftimedatefullshort', 'core_langconfig')).'</p>';
 
-echo '<p> Tratando números decimales 20 / 3 = '.format_float($grade, 2).'</p>';
+// echo '<p> Tratando números decimales 20 / 3 = '.format_float($grade, 2).'</p>';
 
-$messageform->display();
+
+// Print the form without capability
+// $messageform->display();
+
+// Print the form with capability
+if ($allowpost) {
+    $messageform->display();
+}
 
 
 
 if ($data = $messageform->get_data()) {
+    require_capability('local/chats:postmessages', $context);
+    
     $message = required_param('message', PARAM_TEXT);
-    echo $OUTPUT->heading($message, 4);
+
+    //Some output way, the most simple.
+    // echo $OUTPUT->heading($message, 4);
 
     // Some comments
     // $email = required_param('email', PARAM_NOTAGS);
@@ -122,7 +169,7 @@ if ($data = $messageform->get_data()) {
     // $file = required_param('file', PARAM_TEXT);
     // echo $OUTPUT->heading($file, 4);.
 
-    var_dump($data);
+    // var_dump($data);
 
     if (!empty($message)) {
         $record = new stdClass();
@@ -135,44 +182,61 @@ if ($data = $messageform->get_data()) {
         $DB->insert_record('local_chats_messages', $record);
     }
 }
-// Versión directa.
-$messages = $DB->get_records('local_chats_messages');
 
-$userfields = \core_user\fields::for_name()->with_identity($context);
-$userfieldssql = $userfields->get_sql('u');
+if ($viewpost){
+    // Versión directa.
+    // $messages = $DB->get_records('local_chats_messages');
+    
+    $userfields = \core_user\fields::for_name()->with_identity($context);
+    $userfieldssql = $userfields->get_sql('u');
+    
+    $sql = "SELECT m.id, m.message, m.timecreated, m.userid {$userfieldssql->selects}
+                FROM {local_chats_messages} m
+            LEFT JOIN {user} u ON u.id = m.userid
+            ORDER BY timecreated DESC";
+    
+    $messages = $DB->get_records_sql($sql);
+    
+    // A direct way to print messages.
+    // foreach ($messages as $m) {
+    //     echo '<p>' . $m->message . ', ' . $m->timecreated . '</p>';
+    // }
 
-$sql = "SELECT m.id, m.message, m.timecreated, m.userid {$userfieldssql->selects}
-            FROM {local_chats_messages} m
-        LEFT JOIN {user} u ON u.id = m.userid
-        ORDER BY timecreated DESC";
+    echo $OUTPUT->box_start('card-columns');
+    
+    foreach ($messages as $m) {
+        echo html_writer::start_tag('div', array('class' => 'card'));
+        echo html_writer::start_tag('div', array('class' => 'card-body'));
+    
+        // Old version without sanity estructure.
+        // Eecho html_writer::tag('p', $m->message, array('class' => 'card-text'));.
+        // To sanity the format of the message.
+        echo html_writer::tag('p', format_text($m->message, FORMAT_PLAIN), array('class' => 'card-text'));
+        echo html_writer::tag('p', get_string('postedby', 'local_chats', $m->firstname), array('class' => 'card-text'));
+    
+        echo html_writer::start_tag('p', array('class' => 'card-text'));
+        echo html_writer::tag('small', userdate($m->timecreated), array('class' => 'text-muted'));
+        echo html_writer::end_tag('p');
 
-$messages = $DB->get_records_sql($sql);
+        if ($deleteanypost) {
+            echo html_writer::start_tag('p', array('class' => 'card-footer text-center'));
+            echo html_writer::link(
+                new moodle_url(
+                    '/local/chats/index.php',
+                    array('action' => 'del', 'id' => $m->id)
+                ),
+                $OUTPUT->pix_icon('t/delete', '') . get_string('delete')
+            );
+            echo html_writer::end_tag('p');
+        }
 
-foreach ($messages as $m) {
-    echo '<p>' . $m->message . ', ' . $m->timecreated . '</p>';
+        echo html_writer::end_tag('div');
+        echo html_writer::end_tag('div');
+    }
+    
+    echo $OUTPUT->box_end();
+
 }
-
-
-echo $OUTPUT->box_start('card-columns');
-
-foreach ($messages as $m) {
-    echo html_writer::start_tag('div', array('class' => 'card'));
-    echo html_writer::start_tag('div', array('class' => 'card-body'));
-
-    // Old version without sanity estructure.
-    // Eecho html_writer::tag('p', $m->message, array('class' => 'card-text'));.
-    // To sanity the format of the message.
-    echo html_writer::tag('p', format_text($m->message, FORMAT_PLAIN), array('class' => 'card-text'));
-    echo html_writer::tag('p', get_string('postedby', 'local_chats', $m->firstname), array('class' => 'card-text'));
-
-    echo html_writer::start_tag('p', array('class' => 'card-text'));
-    echo html_writer::tag('small', userdate($m->timecreated), array('class' => 'text-muted'));
-    echo html_writer::end_tag('p');
-    echo html_writer::end_tag('div');
-    echo html_writer::end_tag('div');
-}
-
-echo $OUTPUT->box_end();
 
 
 echo $OUTPUT->footer();

@@ -48,7 +48,7 @@ function local_chats_extend_navigation_frontpage(navigation_node $frontpage) {
  * @param global_navigation $root Node representing the global navigation tree.
  */
 function local_chats_extend_navigation(global_navigation $root) {
-    if(is_siteadmin()){
+    if(isloggedin() && !isguestuser()){
         $node = navigation_node::create(
             get_string('pluginname', 'local_chats'),
             new moodle_url('/local/chats/index.php'),
