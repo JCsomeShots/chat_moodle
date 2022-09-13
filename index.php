@@ -67,7 +67,8 @@ $saludosidiomas = local_chats_get_greeting($USER);
 
 $allowpost = has_capability('local/chats:postmessages', $context);
 $viewpost = has_capability('local/chats:viewmessages', $context);
-$deleteanypost = has_capability('local/chats:deleteanymessages', $context);
+$deleteanypost = has_capability('local/chats:deleteanymessage', $context);
+$deleteownpost = has_capability('local/chats:deleteownmessage', $context);
 
 $action = optional_param('action', '', PARAM_TEXT);
 
@@ -81,7 +82,7 @@ $action = optional_param('action', '', PARAM_TEXT);
 if ($action == 'del') {
     $id = required_param('id', PARAM_TEXT);
 
-    if ($deleteanypost) {
+    if ($deleteanypost || $deleteownpost) {
         $params = array('id' => $id);
 
         $DB->delete_records('local_chats_messages', $params);
@@ -218,7 +219,7 @@ if ($viewpost){
         echo html_writer::tag('small', userdate($m->timecreated), array('class' => 'text-muted'));
         echo html_writer::end_tag('p');
 
-        if ($deleteanypost) {
+        if ($deleteanypost || ($deleteownpost && $m->userid == $USER->id)) {
             echo html_writer::start_tag('p', array('class' => 'card-footer text-center'));
             echo html_writer::link(
                 new moodle_url(

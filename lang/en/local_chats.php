@@ -36,12 +36,13 @@ $string['greetingusernz'] = 'Kia Ora, {$a}.';
 $string['greetingusercat'] = 'Bon dia, {$a}.';
 $string['yourmessageen'] = 'Your message';
 $string['yourmessagees'] = 'Escriba aquí su mensaje';
-$string['yourmessagecat'] = 'Escriviu aquí el seu missatge';
+$string['yourmessagecat'] = 'Escriu el teu missatge';
 $string['emailes'] = 'Escriba su correo';
 $string['postedby'] = 'Posted by {$a}.';
 $string['chats:viewmessages'] = 'View messages on the Chat wall';
 $string['chats:postmessages'] = 'Post a new message on the Chat wall';
-$string['chats:deleteanymessages'] = 'Delete any message from the Chat wall';
+$string['chats:deleteanymessage'] = 'Delete any message from the Chat wall';
+$string['chats:deleteownmessage'] = 'Delete only the own post from the Chat wall';
 
 
 

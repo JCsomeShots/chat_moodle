@@ -41,7 +41,15 @@ $capabilities = array(
             'user' => CAP_ALLOW,
         )
     ),
-    'local/chats:deleteanymessages' => array(
+    'local/chats:deleteanymessage' => array(
+        'riskbitmask' => RISK_DATALOSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'user' => CAP_ALLOW,
+        )
+    ),
+    'local/chats:deleteownmessage' => array(
         'riskbitmask' => RISK_DATALOSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
